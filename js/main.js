@@ -79,13 +79,21 @@ function renderLiveStream() {
   const section = document.querySelector('.live-stream');
   const { title, youtubeId, nextStream } = content.live;
 
-  // Always embed when a YouTube ID is set — YouTube shows LIVE automatically
+  // Channel ID = fully automatic (YouTube shows live/not-live itself, every week).
+  // Falls back to a specific video ID if no channelId is configured.
+  const { channelId } = content.live;
+  const embedSrc = channelId
+    ? `https://www.youtube.com/embed/live_stream?channel=${channelId}&rel=0`
+    : youtubeId
+      ? `https://www.youtube.com/embed/${youtubeId}?rel=0`
+      : null;
+
   let streamHTML = '';
-  if (youtubeId) {
+  if (embedSrc) {
     streamHTML = `
       <div class="stream-box stream-active">
         <iframe
-          src="https://www.youtube.com/embed/${youtubeId}?rel=0"
+          src="${embedSrc}"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen>
         </iframe>
