@@ -3,30 +3,91 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Saint Mary Coptic Orthodox Church - Design 1</title>
+  <title>Saint Mary Coptic Orthodox Church</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <header></header>
 
-  <section class="hero"></section>
+  <!-- NAV -->
+  <nav class="site-nav" id="siteNav">
+    <div class="nav-inner">
+      <a href="#home" class="nav-logo">
+        <span class="nav-cross">✝</span>
+        <span class="nav-title">Saint Mary</span>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">&#9776;</button>
+      <div class="nav-links" id="navLinks">
+        <a href="#about">About</a>
+        <a href="#clergy">Clergy</a>
+        <a href="#ministries">Ministries</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#sermons">Sermons</a>
+        <a href="#events">Events</a>
+        <a href="#gallery">Gallery</a>
+        <a href="login.html" class="nav-cta" id="navAuthLink">Login</a>
+      </div>
+    </div>
+  </nav>
 
-  <section class="live-stream"></section>
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-bg">
+      <img src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=1600&h=900&fit=crop&auto=format" alt="Church" class="hero-img">
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Coptic Orthodox · Est. 1985</p>
+      <h1 class="hero-title" id="heroName">Saint Mary</h1>
+      <div class="hero-rule"></div>
+      <p class="hero-sub" id="heroTagline">Living the Orthodox Faith</p>
+      <div class="hero-actions">
+        <a href="#about" class="btn-primary">Discover Our Parish</a>
+        <a href="#live" class="btn-ghost">Watch Live</a>
+      </div>
+    </div>
+    <a href="#live" class="hero-scroll">↓ scroll</a>
+  </section>
 
-  <section class="quick-nav"></section>
+  <!-- LIVE -->
+  <section class="section-live" id="live"></section>
 
-  <main>
-    <section class="about"></section>
-    <section class="clergy"></section>
-    <section class="ministries"></section>
-    <section class="schedule"></section>
-    <section class="sermons"></section>
-    <section class="events"></section>
-    <section class="gallery"></section>
-  </main>
+  <!-- ABOUT -->
+  <section class="section" id="about"></section>
 
-  <footer></footer>
+  <!-- CLERGY -->
+  <section class="section section-cream" id="clergy"></section>
 
+  <!-- MINISTRIES -->
+  <section class="section" id="ministries"></section>
+
+  <!-- SCHEDULE -->
+  <section class="section section-navy" id="schedule"></section>
+
+  <!-- SERMONS -->
+  <section class="section" id="sermons"></section>
+
+  <!-- EVENTS -->
+  <section class="section section-cream" id="events"></section>
+
+  <!-- GALLERY -->
+  <section class="section-gallery" id="gallery"></section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" id="siteFooter"></footer>
+
+  <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    (function() {
+      const user = getCurrentUser();
+      const link = document.getElementById('navAuthLink');
+      if (!link) return;
+      if (user && user.role === 'admin') { link.href = 'admin.html'; link.textContent = 'Admin'; }
+      else if (user) { link.textContent = 'My Account'; }
+    })();
+  </script>
 </body>
 </html>

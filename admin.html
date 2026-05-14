@@ -6,329 +6,309 @@
   <title>Admin Panel — Saint Mary Coptic Orthodox Church</title>
   <style>
     :root {
-      --navy: #05152d;
-      --navy-mid: #0e2c56;
-      --navy-light: #123b73;
-      --gold: #d7b24a;
-      --gold-light: #f2d77b;
-      --cream: #faf8f3;
-      --white: #ffffff;
-      --text: #152033;
-      --gray: #888;
-      --border: #e5e0d8;
-      --danger: #c0392b;
-      --success: #1e8449;
+      --navy:#05152d; --navy-mid:#0e2c56; --navy-light:#123b73;
+      --gold:#d7b24a; --gold-light:#f2d77b; --gold-line:rgba(215,178,74,0.25);
+      --cream:#faf8f3; --cream-dark:#f0ece3; --white:#fff;
+      --text:#1a2438; --gray:#6b7489; --border:rgba(215,178,74,0.22);
+      --danger:#c0392b; --success:#1e8449;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Georgia, 'Times New Roman', serif; background: var(--cream); color: var(--text); min-height: 100vh; }
-
-    .admin-header {
-      background: linear-gradient(135deg, var(--navy), var(--navy-light));
-      color: var(--white);
-      padding: 1.5rem 2rem;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 3px solid var(--gold);
-    }
-    .admin-header h1 { font-size: 1.3rem; font-weight: normal; }
-    .admin-header .sub { color: var(--gold); font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 0.2rem; }
-
-    .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
-
-    /* LOGIN */
-    .login-card {
-      background: var(--white); border-radius: 12px; padding: 3rem;
-      max-width: 440px; margin: 4rem auto;
-      box-shadow: 0 8px 32px rgba(5,21,45,0.15); border-top: 4px solid var(--gold);
-    }
-    .login-card h2 { color: var(--navy); margin-bottom: 0.4rem; font-size: 1.5rem; }
-    .login-card > p { color: var(--gray); font-size: 0.9rem; margin-bottom: 2rem; }
-    .login-hint { text-align: center; margin-top: 1.5rem; color: var(--gray); font-size: 0.85rem; }
-    .login-hint strong { color: var(--navy-mid); }
-
-    .form-group { margin-bottom: 1.25rem; }
-    .form-group label {
-      display: block; margin-bottom: 0.4rem;
-      font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.8px; color: var(--navy-mid);
-    }
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      width: 100%; padding: 0.7rem 0.9rem;
-      border: 1.5px solid var(--border); border-radius: 6px;
-      font-family: inherit; font-size: 0.95rem; color: var(--text);
-      background: var(--white); transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-      outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(215,178,74,0.18);
-    }
-    .form-group textarea { resize: vertical; min-height: 80px; }
-
-    .btn {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      padding: 0.65rem 1.4rem; border: none; border-radius: 6px;
-      font-family: inherit; font-size: 0.88rem; font-weight: 700;
-      cursor: pointer; transition: all 0.18s; text-decoration: none;
-    }
-    .btn:hover { transform: translateY(-1px); }
-    .btn-navy { background: var(--navy); color: var(--white); }
-    .btn-navy:hover { background: var(--navy-light); }
-    .btn-gold { background: var(--gold); color: var(--navy); }
-    .btn-gold:hover { background: var(--gold-light); }
-    .btn-muted { background: #ccc; color: var(--text); }
-    .btn-muted:hover { background: #bbb; }
-    .btn-danger { background: var(--danger); color: var(--white); font-size: 0.76rem; padding: 0.32rem 0.75rem; border-radius: 4px; }
-    .btn-danger:hover { background: #e74c3c; transform: none; }
-    .btn-edit { background: var(--navy-mid); color: var(--white); font-size: 0.76rem; padding: 0.32rem 0.75rem; border-radius: 4px; }
-    .btn-edit:hover { background: var(--navy-light); transform: none; }
-    .btn-full { width: 100%; justify-content: center; }
-    .btn-sm { font-size: 0.78rem; padding: 0.35rem 0.85rem; }
-
-    #adminPanel { display: none; }
-
-    .topbar {
-      background: var(--white); border-radius: 10px; padding: 1rem 1.5rem;
-      margin-bottom: 1.5rem;
-      display: flex; align-items: center; justify-content: space-between;
-      box-shadow: 0 2px 10px rgba(5,21,45,0.08); flex-wrap: wrap; gap: 0.75rem;
-    }
-    .topbar h2 { color: var(--navy); font-size: 1.05rem; font-weight: normal; }
-    .topbar-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
-
-    .section-card {
-      background: var(--white); border-radius: 10px; margin-bottom: 1.5rem;
-      box-shadow: 0 2px 10px rgba(5,21,45,0.08); overflow: hidden;
-    }
-    .section-head {
-      background: var(--navy); color: var(--white); padding: 0.9rem 1.5rem;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .section-head h3 { font-size: 0.92rem; font-weight: 600; letter-spacing: 0.3px; }
-    .section-body { padding: 1.25rem 1.5rem; }
-
-    .record-list { display: flex; flex-direction: column; gap: 0.6rem; }
-    .record-item {
-      display: flex; align-items: center; gap: 1rem;
-      padding: 0.85rem 1rem; border: 1px solid var(--border); border-radius: 8px;
-      background: var(--cream);
-    }
-    .record-thumb { width: 46px; height: 46px; border-radius: 6px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border); }
-    .record-icon { width: 46px; height: 46px; border-radius: 6px; background: var(--navy-mid); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
-    .record-info { flex: 1; min-width: 0; }
-    .record-info strong { display: block; color: var(--navy); font-size: 0.92rem; }
-    .record-info span { color: var(--gray); font-size: 0.8rem; }
-    .record-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
-
-    .empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--gray); font-size: 0.88rem; }
-    .empty-state em { display: block; font-size: 2rem; margin-bottom: 0.5rem; font-style: normal; }
-
-    .live-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    @media (max-width: 600px) { .live-grid { grid-template-columns: 1fr; } }
-    .checkbox-label {
-      display: flex; align-items: center; gap: 0.75rem;
-      padding: 0.7rem 0.9rem; border: 1.5px solid var(--border); border-radius: 6px; cursor: pointer;
-    }
-    .checkbox-label input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--navy); }
-
-    /* MODAL */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(5,21,45,0.75);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 9999; padding: 1rem;
-      opacity: 0; pointer-events: none; transition: opacity 0.22s;
-    }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
-    .modal-box {
-      background: var(--white); border-radius: 12px;
-      width: 100%; max-width: 520px; max-height: 88vh; overflow-y: auto;
-      box-shadow: 0 24px 64px rgba(5,21,45,0.35); border-top: 4px solid var(--gold);
-      transform: translateY(-20px) scale(0.97); transition: transform 0.22s;
-    }
-    .modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
-    .modal-head {
-      padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; background: var(--white); z-index: 1;
-    }
-    .modal-head h3 { color: var(--navy); font-size: 1rem; }
-    .modal-close { background: none; border: none; font-size: 1.4rem; color: var(--gray); cursor: pointer; line-height: 1; }
-    .modal-close:hover { color: var(--navy); }
-    .modal-body { padding: 1.5rem; }
-    .modal-foot {
-      padding: 1rem 1.5rem; border-top: 1px solid var(--border);
-      display: flex; justify-content: flex-end; gap: 0.75rem;
-      position: sticky; bottom: 0; background: var(--white); z-index: 1;
-    }
-    .req { color: #e74c3c; }
-
-    #toast {
-      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-      background: var(--navy); color: var(--white);
-      padding: 0.7rem 1.75rem; border-radius: 6px;
-      font-size: 0.85rem; border-left: 4px solid var(--gold);
-      z-index: 10000; opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
-    }
-    #toast.show { opacity: 1; }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter','Helvetica Neue',Arial,sans-serif; background:var(--cream-dark); color:var(--text); min-height:100vh; }
+    .topbar { background:var(--navy); color:var(--white); padding:1rem 1.5rem; display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid var(--gold); }
+    .topbar-left h1 { font-size:1.1rem; font-weight:500; font-family:'Inter',sans-serif; }
+    .topbar-left .sub { color:var(--gold); font-size:0.65rem; letter-spacing:3px; text-transform:uppercase; margin-top:0.15rem; }
+    .topbar-right { display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; }
+    .user-pill { background:rgba(215,178,74,0.15); color:var(--gold); padding:0.35rem 0.85rem; font-size:0.78rem; border:1px solid var(--gold-line); }
+    .layout { display:grid; grid-template-columns:220px 1fr; min-height:calc(100vh - 63px); }
+    .sidebar { background:var(--navy-mid); padding:1.5rem 0; border-right:1px solid rgba(215,178,74,0.1); }
+    .sidebar-label { font-size:0.6rem; letter-spacing:3px; text-transform:uppercase; color:rgba(215,178,74,0.4); padding:0.5rem 1.25rem; }
+    .sidebar-link { display:block; padding:0.6rem 1.25rem; color:rgba(255,255,255,0.6); font-size:0.85rem; cursor:pointer; transition:all 0.15s; border-left:3px solid transparent; }
+    .sidebar-link:hover { color:var(--white); background:rgba(255,255,255,0.04); }
+    .sidebar-link.active { color:var(--gold); border-left-color:var(--gold); background:rgba(215,178,74,0.06); }
+    .sidebar-divider { height:1px; background:rgba(215,178,74,0.1); margin:0.75rem 1.25rem; }
+    .main { padding:2rem; overflow-y:auto; }
+    .section-panel { display:none; }
+    .section-panel.active { display:block; }
+    .panel-title { font-size:1.2rem; color:var(--navy); margin-bottom:0.25rem; font-weight:600; }
+    .panel-sub { color:var(--gray); font-size:0.85rem; margin-bottom:1.5rem; }
+    .card { background:var(--white); border-left:4px solid var(--gold); margin-bottom:1.25rem; box-shadow:0 2px 10px rgba(5,21,45,0.07); }
+    .card-head { padding:0.9rem 1.25rem; border-bottom:1px solid var(--gold-line); display:flex; align-items:center; justify-content:space-between; }
+    .card-head h3 { font-size:0.82rem; letter-spacing:1px; text-transform:uppercase; color:var(--navy); }
+    .card-body { padding:1.25rem; }
+    .form-group { margin-bottom:1.1rem; }
+    .form-group label { display:block; margin-bottom:0.35rem; font-size:0.7rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--navy-mid); }
+    .form-group input, .form-group textarea, .form-group select { width:100%; padding:0.65rem 0.9rem; border:1.5px solid var(--gold-line); background:var(--cream); font-family:inherit; font-size:0.92rem; color:var(--text); transition:border-color 0.2s; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(215,178,74,0.12); background:var(--white); }
+    .form-group textarea { resize:vertical; min-height:80px; }
+    .field-hint { font-size:0.75rem; color:var(--gray); margin-top:0.3rem; line-height:1.5; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .form-row.cols3 { grid-template-columns:1fr 1fr 1fr; }
+    .upload-box { border:2px dashed var(--gold-line); background:var(--cream); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:110px; cursor:pointer; position:relative; overflow:hidden; transition:border-color 0.2s; }
+    .upload-box:hover { border-color:var(--gold); }
+    .upload-ph { text-align:center; pointer-events:none; padding:1rem; }
+    .upload-ph-icon { font-size:1.8rem; display:block; margin-bottom:0.4rem; }
+    .upload-ph span { font-size:0.78rem; color:var(--gray); }
+    .upload-ph small { display:block; font-size:0.7rem; color:rgba(107,116,137,0.6); margin-top:0.2rem; }
+    .upload-preview { max-height:160px; max-width:100%; object-fit:cover; display:none; }
+    .btn { display:inline-flex; align-items:center; gap:0.4rem; padding:0.6rem 1.2rem; border:none; font-family:inherit; font-size:0.82rem; font-weight:700; cursor:pointer; transition:all 0.18s; }
+    .btn-navy { background:var(--navy); color:var(--white); }
+    .btn-navy:hover { background:var(--navy-light); }
+    .btn-gold { background:var(--gold); color:var(--navy); }
+    .btn-gold:hover { background:var(--gold-light); }
+    .btn-muted { background:#ccc; color:var(--text); }
+    .btn-success { background:var(--success); color:var(--white); }
+    .btn-danger { background:var(--danger); color:var(--white); font-size:0.72rem; padding:0.28rem 0.65rem; }
+    .btn-warning { background:#e67e22; color:var(--white); font-size:0.72rem; padding:0.28rem 0.65rem; }
+    .btn-info { background:var(--navy-mid); color:var(--white); font-size:0.72rem; padding:0.28rem 0.65rem; }
+    .btn-sm { font-size:0.75rem; padding:0.32rem 0.8rem; }
+    .record-list { display:flex; flex-direction:column; gap:0.5rem; }
+    .record-item { display:flex; align-items:center; gap:0.9rem; padding:0.8rem 1rem; border:1px solid var(--gold-line); background:var(--cream-dark); }
+    .rec-thumb { width:44px; height:44px; object-fit:cover; flex-shrink:0; border:1px solid var(--gold-line); }
+    .rec-icon { width:44px; height:44px; background:var(--navy); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+    .rec-info { flex:1; min-width:0; }
+    .rec-info strong { display:block; color:var(--navy); font-size:0.88rem; }
+    .rec-info span { color:var(--gray); font-size:0.78rem; display:block; }
+    .rec-actions { display:flex; gap:0.4rem; flex-shrink:0; }
+    .empty-state { text-align:center; padding:2.5rem; color:var(--gray); font-size:0.85rem; }
+    .empty-state em { display:block; font-size:2rem; margin-bottom:0.5rem; font-style:normal; }
+    .user-table { width:100%; border-collapse:collapse; font-size:0.88rem; }
+    .user-table th { text-align:left; padding:0.6rem 0.9rem; font-size:0.68rem; letter-spacing:2px; text-transform:uppercase; color:var(--navy-mid); border-bottom:2px solid var(--gold-line); }
+    .user-table td { padding:0.75rem 0.9rem; border-bottom:1px solid var(--gold-line); vertical-align:middle; }
+    .role-badge, .status-badge { display:inline-block; padding:0.18rem 0.6rem; font-size:0.68rem; letter-spacing:1px; text-transform:uppercase; font-weight:700; }
+    .role-admin { background:var(--navy); color:var(--gold); }
+    .role-member { background:rgba(5,21,45,0.08); color:var(--navy-mid); }
+    .status-active { background:#e8f8ee; color:var(--success); }
+    .status-pending { background:#fff3cd; color:#856404; }
+    .modal-overlay { position:fixed; inset:0; background:rgba(5,21,45,0.8); display:flex; align-items:center; justify-content:center; z-index:9999; padding:1rem; opacity:0; pointer-events:none; transition:opacity 0.22s; }
+    .modal-overlay.open { opacity:1; pointer-events:all; }
+    .modal-box { background:var(--white); width:100%; max-width:520px; max-height:88vh; overflow-y:auto; box-shadow:0 24px 64px rgba(5,21,45,0.4); border-top:4px solid var(--gold); transform:translateY(-16px); transition:transform 0.22s; }
+    .modal-overlay.open .modal-box { transform:translateY(0); }
+    .modal-head { padding:1.1rem 1.4rem; border-bottom:1px solid var(--gold-line); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:var(--white); z-index:1; }
+    .modal-head h3 { color:var(--navy); font-size:0.95rem; }
+    .modal-close { background:none; border:none; font-size:1.3rem; color:var(--gray); cursor:pointer; }
+    .modal-body { padding:1.4rem; }
+    .modal-foot { padding:0.9rem 1.4rem; border-top:1px solid var(--gold-line); display:flex; justify-content:flex-end; gap:0.6rem; position:sticky; bottom:0; background:var(--white); z-index:1; }
+    .req { color:var(--danger); }
+    #toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%); background:var(--navy); color:var(--white); padding:0.65rem 1.5rem; font-size:0.82rem; border-left:4px solid var(--gold); z-index:10000; opacity:0; transition:opacity 0.3s; pointer-events:none; white-space:nowrap; }
+    #toast.show { opacity:1; }
+    @media (max-width:900px) { .layout { grid-template-columns:1fr; } .sidebar { display:none; } .form-row, .form-row.cols3 { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
 
-  <div class="admin-header">
-    <div>
-      <h1>Saint Mary Coptic Orthodox Church</h1>
-      <div class="sub">Admin Dashboard</div>
-    </div>
-    <a href="index.html" class="btn btn-gold" style="font-size:0.8rem;">⛪ View Website</a>
+<div class="topbar">
+  <div class="topbar-left">
+    <h1>Saint Mary Coptic Orthodox Church</h1>
+    <div class="sub">Admin Dashboard</div>
   </div>
+  <div class="topbar-right">
+    <span class="user-pill" id="adminName">Loading...</span>
+    <a href="index.html" class="btn btn-gold btn-sm">⛪ View Site</a>
+    <button class="btn btn-muted btn-sm" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
 
-  <div class="container">
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-label">Content</div>
+    <span class="sidebar-link active" onclick="showPanel('church')">⛪ Church Info</span>
+    <span class="sidebar-link" onclick="showPanel('about')">📖 About</span>
+    <span class="sidebar-link" onclick="showPanel('live')">📺 Live Stream</span>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-label">People</div>
+    <span class="sidebar-link" onclick="showPanel('clergy')">👤 Clergy</span>
+    <span class="sidebar-link" onclick="showPanel('ministries')">🙏 Ministries</span>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-label">Services</div>
+    <span class="sidebar-link" onclick="showPanel('schedule')">📅 Schedule</span>
+    <span class="sidebar-link" onclick="showPanel('sermons')">🎙️ Sermons</span>
+    <span class="sidebar-link" onclick="showPanel('events')">📣 Events</span>
+    <span class="sidebar-link" onclick="showPanel('gallery')">🖼️ Gallery</span>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-label">Admin</div>
+    <span class="sidebar-link" onclick="showPanel('users')">👥 Users</span>
+  </nav>
 
-    <!-- LOGIN -->
-    <div id="loginView" class="login-card">
-      <h2>Admin Login</h2>
-      <p>Manage your church website content securely</p>
-      <form onsubmit="event.preventDefault(); doLogin();">
-        <div class="form-group">
-          <label>Username</label>
-          <input type="text" id="loginUser" placeholder="Enter username" required autocomplete="username">
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" id="loginPass" placeholder="Enter password" required autocomplete="current-password">
-        </div>
-        <button type="submit" class="btn btn-navy btn-full" style="margin-top:0.5rem; padding:0.8rem;">Login →</button>
-      </form>
-      <p class="login-hint">Default: <strong>admin</strong> / <strong>admin</strong></p>
-    </div>
+  <div class="main">
 
-    <!-- ADMIN PANEL -->
-    <div id="adminPanel">
-
-      <div class="topbar">
-        <h2>Content Manager</h2>
-        <div class="topbar-actions">
-          <button class="btn btn-gold" onclick="downloadJSON()">📥 Export JSON</button>
-          <button class="btn btn-muted" onclick="doLogout()">Logout</button>
+    <!-- CHURCH INFO -->
+    <div class="section-panel active" id="panel-church">
+      <h2 class="panel-title">Church Information</h2>
+      <p class="panel-sub">Basic details shown across the website.</p>
+      <div class="card">
+        <div class="card-head"><h3>Identity</h3><button class="btn btn-gold btn-sm" onclick="saveChurchInfo()">Save</button></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group"><label>Church Name</label><input type="text" id="churchName" placeholder="Saint Mary Coptic Orthodox Church"></div>
+            <div class="form-group"><label>Tagline</label><input type="text" id="churchTagline" placeholder="Living the Orthodox Faith"></div>
+          </div>
         </div>
       </div>
+    </div>
 
-      <!-- LIVE STREAM -->
-      <div class="section-card">
-        <div class="section-head">
-          <h3>📺 Live Stream</h3>
-          <button class="btn btn-gold btn-sm" onclick="saveLiveStream()">Save</button>
+    <!-- ABOUT -->
+    <div class="section-panel" id="panel-about">
+      <h2 class="panel-title">About Section</h2>
+      <p class="panel-sub">The "About Our Church" section on the website.</p>
+      <div class="card">
+        <div class="card-head"><h3>Content</h3><button class="btn btn-gold btn-sm" onclick="saveAbout()">Save</button></div>
+        <div class="card-body">
+          <div class="form-group"><label>Section Title</label><input type="text" id="aboutTitle"></div>
+          <div class="form-group"><label>Main Description</label><textarea id="aboutDesc" rows="4"></textarea></div>
+          <div class="form-row">
+            <div class="form-group"><label>Vision</label><textarea id="aboutVision" rows="3"></textarea></div>
+            <div class="form-group"><label>Mission</label><textarea id="aboutMission" rows="3"></textarea></div>
+          </div>
         </div>
-        <div class="section-body">
-          <div class="live-grid">
-            <div class="form-group">
-              <label>Stream Title</label>
-              <input type="text" id="liveTitle" placeholder="Sunday Liturgy Live">
+      </div>
+    </div>
+
+    <!-- LIVE STREAM -->
+    <div class="section-panel" id="panel-live">
+      <h2 class="panel-title">Live Stream</h2>
+      <p class="panel-sub">YouTube live stream settings.</p>
+      <div class="card">
+        <div class="card-head"><h3>Stream Settings</h3><button class="btn btn-gold btn-sm" onclick="saveLive()">Save</button></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group"><label>Stream Title</label><input type="text" id="liveTitle" placeholder="Sunday Liturgy Live"></div>
+            <div class="form-group"><label>Next Stream Time</label><input type="text" id="liveNextStream" placeholder="Sunday, 10:00 AM"></div>
+          </div>
+          <div class="form-group">
+            <label>YouTube Channel ID <span class="req">*</span></label>
+            <input type="text" id="liveChannelId" placeholder="UCxxxxxxxxxxxxxxxxxxxxxxxxx">
+            <p class="field-hint"><strong>Set once — works every Sunday automatically.</strong> YouTube Studio → Settings → Channel → Basic info → Channel ID (starts with UC…)</p>
+          </div>
+          <div class="form-group">
+            <label>Fallback: Specific Video Link</label>
+            <input type="text" id="liveYoutubeUrl" placeholder="https://www.youtube.com/watch?v=...">
+            <p class="field-hint">Optional. Used only if no Channel ID is set above.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLERGY -->
+    <div class="section-panel" id="panel-clergy">
+      <h2 class="panel-title">Clergy &amp; Staff</h2>
+      <p class="panel-sub">Manage clergy profiles shown on the website.</p>
+      <div class="card">
+        <div class="card-head"><h3>Clergy Members</h3><button class="btn btn-gold btn-sm" onclick="openModal('clergy')">+ Add Clergy</button></div>
+        <div class="card-body"><div class="record-list" id="list-clergy"></div></div>
+      </div>
+    </div>
+
+    <!-- MINISTRIES -->
+    <div class="section-panel" id="panel-ministries">
+      <h2 class="panel-title">Ministries</h2>
+      <p class="panel-sub">Each ministry gets an uploaded image, name, and description.</p>
+      <div class="card">
+        <div class="card-head"><h3>Ministry List</h3><button class="btn btn-gold btn-sm" onclick="openModal('ministries')">+ Add Ministry</button></div>
+        <div class="card-body"><div class="record-list" id="list-ministries"></div></div>
+      </div>
+    </div>
+
+    <!-- SCHEDULE -->
+    <div class="section-panel" id="panel-schedule">
+      <h2 class="panel-title">Weekly Schedule</h2>
+      <p class="panel-sub">All regular services and their times.</p>
+      <div class="card">
+        <div class="card-head"><h3>Services</h3><button class="btn btn-gold btn-sm" onclick="openModal('schedule')">+ Add Service</button></div>
+        <div class="card-body"><div class="record-list" id="list-schedule"></div></div>
+      </div>
+    </div>
+
+    <!-- SERMONS -->
+    <div class="section-panel" id="panel-sermons">
+      <h2 class="panel-title">Sermons</h2>
+      <p class="panel-sub">Archive of sermon recordings linked to YouTube.</p>
+      <div class="card">
+        <div class="card-head"><h3>Sermon Archive</h3><button class="btn btn-gold btn-sm" onclick="openModal('sermons')">+ Add Sermon</button></div>
+        <div class="card-body"><div class="record-list" id="list-sermons"></div></div>
+      </div>
+    </div>
+
+    <!-- EVENTS -->
+    <div class="section-panel" id="panel-events">
+      <h2 class="panel-title">Events</h2>
+      <p class="panel-sub">Upcoming church events. Past events are hidden automatically.</p>
+      <div class="card">
+        <div class="card-head"><h3>Events</h3><button class="btn btn-gold btn-sm" onclick="openModal('events')">+ Add Event</button></div>
+        <div class="card-body"><div class="record-list" id="list-events"></div></div>
+      </div>
+    </div>
+
+    <!-- GALLERY -->
+    <div class="section-panel" id="panel-gallery">
+      <h2 class="panel-title">Photo Gallery</h2>
+      <p class="panel-sub">Upload photos for the gallery section.</p>
+      <div class="card">
+        <div class="card-head"><h3>Gallery Photos</h3><button class="btn btn-gold btn-sm" onclick="openModal('gallery')">+ Add Photo</button></div>
+        <div class="card-body"><div class="record-list" id="list-gallery"></div></div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="section-panel" id="panel-users">
+      <h2 class="panel-title">User Management</h2>
+      <p class="panel-sub">Manage who can sign in and access the admin panel.</p>
+      <div class="card" style="margin-bottom:1.25rem">
+        <div class="card-head"><h3>Add User Directly</h3></div>
+        <div class="card-body">
+          <div class="form-row cols3">
+            <div class="form-group"><label>Full Name</label><input type="text" id="newUserName" placeholder="John Smith"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="newUserEmail" placeholder="john@email.com"></div>
+            <div class="form-group"><label>Password</label><input type="text" id="newUserPass" placeholder="Temporary password"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Role</label>
+              <select id="newUserRole"><option value="member">Member</option><option value="admin">Admin</option></select>
             </div>
-            <div class="form-group">
-              <label>YouTube Video ID</label>
-              <input type="text" id="liveYoutubeId" placeholder="dQw4w9WgXcQ">
-            </div>
-            <div class="form-group">
-              <label>Next Stream Time</label>
-              <input type="text" id="liveNextStream" placeholder="Sunday, 10:00 AM">
-            </div>
-            <div class="form-group">
-              <label>Stream Status</label>
-              <label class="checkbox-label">
-                <input type="checkbox" id="liveIsLive">
-                <span>Currently Streaming Live</span>
-              </label>
+            <div class="form-group" style="display:flex;align-items:flex-end">
+              <button class="btn btn-navy" onclick="addUser()" style="width:100%">+ Add User</button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- CLERGY -->
-      <div class="section-card">
-        <div class="section-head">
-          <h3>⛪ Clergy &amp; Staff</h3>
-          <button class="btn btn-gold btn-sm" onclick="openModal('clergy')">+ Add Clergy</button>
+      <div class="card">
+        <div class="card-head">
+          <h3>All Users</h3>
+          <div style="display:flex;gap:0.5rem">
+            <button class="btn btn-gold btn-sm" onclick="downloadContentJSON()">📥 Content JSON</button>
+            <button class="btn btn-navy btn-sm" onclick="downloadUsersJSON()">📥 Users JSON</button>
+          </div>
         </div>
-        <div class="section-body">
-          <div class="record-list" id="clergyList"></div>
+        <div class="card-body">
+          <div style="overflow-x:auto">
+            <table class="user-table">
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+              <tbody id="userTableBody"></tbody>
+            </table>
+          </div>
         </div>
-      </div>
-
-      <!-- MINISTRIES -->
-      <div class="section-card">
-        <div class="section-head">
-          <h3>🙏 Ministries</h3>
-          <button class="btn btn-gold btn-sm" onclick="openModal('ministries')">+ Add Ministry</button>
-        </div>
-        <div class="section-body">
-          <div class="record-list" id="ministriesList"></div>
-        </div>
-      </div>
-
-      <!-- SCHEDULE -->
-      <div class="section-card">
-        <div class="section-head">
-          <h3>📅 Weekly Schedule</h3>
-          <button class="btn btn-gold btn-sm" onclick="openModal('schedule')">+ Add Service</button>
-        </div>
-        <div class="section-body">
-          <div class="record-list" id="scheduleList"></div>
-        </div>
-      </div>
-
-      <!-- SERMONS -->
-      <div class="section-card">
-        <div class="section-head">
-          <h3>🎙️ Sermons</h3>
-          <button class="btn btn-gold btn-sm" onclick="openModal('sermons')">+ Add Sermon</button>
-        </div>
-        <div class="section-body">
-          <div class="record-list" id="sermonsList"></div>
-        </div>
-      </div>
-
-      <!-- EVENTS -->
-      <div class="section-card">
-        <div class="section-head">
-          <h3>📣 Events</h3>
-          <button class="btn btn-gold btn-sm" onclick="openModal('events')">+ Add Event</button>
-        </div>
-        <div class="section-body">
-          <div class="record-list" id="eventsList"></div>
-        </div>
-      </div>
-
-      <!-- GALLERY -->
-      <div class="section-card">
-        <div class="section-head">
-          <h3>🖼️ Gallery</h3>
-          <button class="btn btn-gold btn-sm" onclick="openModal('gallery')">+ Add Photo</button>
-        </div>
-        <div class="section-body">
-          <div class="record-list" id="galleryList"></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- MODAL OVERLAY -->
-  <div id="modalOverlay" class="modal-overlay" onclick="handleBgClick(event)">
-    <div class="modal-box">
-      <div class="modal-head">
-        <h3 id="modalTitle">Add Item</h3>
-        <button class="modal-close" onclick="closeModal()">✕</button>
-      </div>
-      <div class="modal-body" id="modalBody"></div>
-      <div class="modal-foot">
-        <button class="btn btn-muted" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-navy" onclick="saveModal()">Save Record</button>
       </div>
     </div>
+
   </div>
+</div>
 
-  <div id="toast"></div>
+<div id="modalOverlay" class="modal-overlay" onclick="handleBgClick(event)">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modalTitle">Add Item</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-muted" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-navy" onclick="saveModal()">Save Record</button>
+    </div>
+  </div>
+</div>
 
-  <script src="js/admin.js"></script>
+<div id="toast"></div>
+
+<script src="js/auth.js"></script>
+<script src="js/admin.js"></script>
 </body>
 </html>

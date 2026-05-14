@@ -1,31 +1,24 @@
-// Design 1: Main JavaScript - Elegant Classic Style
+// Design 1 — Modern Luminous — Main JS
 
 let content = {};
 
-// Initialize
 document.addEventListener('DOMContentLoaded', async () => {
   await loadContent();
-  renderPage();
-  setupMenuToggle();
-  setupSmoothScroll();
+  renderAll();
+  setupNav();
 });
 
-// Load content from JSON
 async function loadContent() {
   try {
-    const response = await fetch('./data/content.json');
-    content = await response.json();
-  } catch (error) {
-    console.error('Error loading content:', error);
-  }
+    const r = await fetch('./data/content.json?t=' + Date.now());
+    content = await r.json();
+  } catch(e) { console.error('Failed to load content.json:', e); }
 }
 
-// Render entire page
-function renderPage() {
-  renderHeader();
+function renderAll() {
+  renderNav();
   renderHero();
-  renderLiveStream();
-  renderQuickNav();
+  renderLive();
   renderAbout();
   renderClergy();
   renderMinistries();
@@ -36,389 +29,352 @@ function renderPage() {
   renderFooter();
 }
 
-// Header
-function renderHeader() {
-  const header = document.querySelector('header');
-  header.innerHTML = `
-    <div class="header-container">
-      <div class="logo">
-        <img src="${imgSrc(content.church.logo)}" alt="Church Logo" onerror="this.style.display='none'">
-        <span>Saint Mary</span>
-      </div>
-      <nav id="nav">
-        <ul>
-          <li><a href="#about">About</a></li>
-          <li><a href="#clergy">Clergy</a></li>
-          <li><a href="#ministries">Ministries</a></li>
-          <li><a href="#schedule">Schedule</a></li>
-          <li><a href="#sermons">Sermons</a></li>
-          <li><a href="#events">Events</a></li>
-          <li><a href="#gallery">Gallery</a></li>
-          <li><a href="admin.html">Admin</a></li>
-        </ul>
-      </nav>
-      <button class="menu-toggle" id="menuToggle">☰</button>
-    </div>
-  `;
+// ── NAV SCROLL BEHAVIOUR ──────────────────────────────────────────
+function setupNav() {
+  const nav = document.getElementById('siteNav');
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('navLinks');
+
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  if (hamburger) {
+    hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+  }
 }
 
-// Hero Section
+// ── NAV AUTH LINK ──────────────────────────────────────────────────
+function renderNav() {
+  const user = getCurrentUser();
+  const link = document.getElementById('navAuthLink');
+  if (!link) return;
+  if (user && user.role === 'admin') { link.href = 'admin.html'; link.textContent = 'Admin'; }
+  else if (user) { link.textContent = 'My Account'; }
+}
+
+// ── HERO ───────────────────────────────────────────────────────────
 function renderHero() {
-  const hero = document.querySelector('.hero');
-  hero.innerHTML = `
-    <div class="hero-content">
-      <img src="${imgSrc(content.church.logo)}" alt="Church Logo" onerror="this.style.display='none'">
-      <h1>${content.church.name}</h1>
-      <p class="tagline">${content.church.tagline}</p>
-    </div>
-  `;
+  const ch = content.church || {};
+  const nameEl = document.getElementById('heroName');
+  const tagEl  = document.getElementById('heroTagline');
+  if (nameEl) nameEl.textContent = 'Saint Mary';
+  if (tagEl)  tagEl.textContent  = ch.tagline || 'Living the Orthodox Faith';
 }
 
-// Live Stream Section
-function renderLiveStream() {
-  const section = document.querySelector('.live-stream');
-  const { title, youtubeId, nextStream } = content.live;
-
-  // Channel ID = fully automatic (YouTube shows live/not-live itself, every week).
-  // Falls back to a specific video ID if no channelId is configured.
-  const { channelId } = content.live;
-  const embedSrc = channelId
-    ? `https://www.youtube.com/embed/live_stream?channel=${channelId}&rel=0`
-    : youtubeId
-      ? `https://www.youtube.com/embed/${youtubeId}?rel=0`
+// ── LIVE ───────────────────────────────────────────────────────────
+function renderLive() {
+  const el = document.getElementById('live');
+  if (!el) return;
+  const live = content.live || {};
+  const embedSrc = live.channelId
+    ? `https://www.youtube.com/embed/live_stream?channel=${esc(live.channelId)}&rel=0`
+    : live.youtubeId
+      ? `https://www.youtube.com/embed/${esc(live.youtubeId)}?rel=0`
       : null;
 
-  let streamHTML = '';
   if (embedSrc) {
-    streamHTML = `
-      <div class="stream-box stream-active">
-        <iframe
-          src="${embedSrc}"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen>
-        </iframe>
-      </div>
-      <div class="stream-next-time">Regular stream: ${nextStream}</div>
-    `;
+    el.innerHTML = `
+      <div class="live-inner">
+        <span class="eyebrow">Live Worship</span>
+        <h2>${esc(live.title || 'Sunday Liturgy')}</h2>
+        <div class="live-frame">
+          <iframe src="${embedSrc}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+        <p class="live-next" style="margin-top:1.25rem">
+          Regular stream: <strong style="color:var(--gold-light)">${esc(live.nextStream || 'Sunday, 10:00 AM')}</strong>
+        </p>
+      </div>`;
   } else {
-    streamHTML = `
-      <div class="stream-box stream-inactive">
-        <div class="icon">📺</div>
-        <h3>Live Stream Coming Soon</h3>
-        <p>${content.live.description || ''}</p>
-        <div class="stream-next-time">${nextStream}</div>
-      </div>
-    `;
+    el.innerHTML = `
+      <div class="live-inner">
+        <span class="eyebrow">Live Worship</span>
+        <h2>${esc(live.title || 'Sunday Liturgy')}</h2>
+        <p class="live-next">Next stream: <strong style="color:var(--gold-light)">${esc(live.nextStream || 'Sunday, 10:00 AM')}</strong></p>
+        <p style="color:rgba(255,255,255,0.35);font-size:0.88rem;margin-top:0.5rem">No stream configured — add a YouTube Channel ID in the admin panel.</p>
+      </div>`;
   }
-
-  section.innerHTML = `
-    <div class="live-stream-container">
-      <h2>${title}</h2>
-      ${streamHTML}
-    </div>
-  `;
 }
 
-// Quick Navigation
-function renderQuickNav() {
-  const section = document.querySelector('.quick-nav');
-  const sections = [
-    { name: 'About', icon: '📖', href: '#about' },
-    { name: 'Ministries', icon: '🙏', href: '#ministries' },
-    { name: 'Schedule', icon: '📅', href: '#schedule' },
-    { name: 'Sermons', icon: '🎤', href: '#sermons' },
-    { name: 'Events', icon: '🎉', href: '#events' },
-    { name: 'Gallery', icon: '🖼️', href: '#gallery' }
-  ];
-
-  const navHTML = sections.map(s => `
-    <div class="nav-card" onclick="document.location='${s.href}'">
-      <div class="icon">${s.icon}</div>
-      <h3>${s.name}</h3>
-      <p>Explore our ${s.name.toLowerCase()}</p>
-    </div>
-  `).join('');
-
-  section.innerHTML = `
-    <div class="quick-nav-container">
-      <h2>Explore Our Community</h2>
-      <div class="nav-grid">
-        ${navHTML}
-      </div>
-    </div>
-  `;
-}
-
-// About Section
+// ── ABOUT ──────────────────────────────────────────────────────────
 function renderAbout() {
-  const section = document.querySelector('.about');
-  const { title, description, vision, mission } = content.about;
-
-  section.innerHTML = `
-    <div class="container">
-      <h2 id="about">${title}</h2>
-      <div class="about-content">
+  const el = document.getElementById('about');
+  if (!el) return;
+  const ab = content.about || {};
+  el.innerHTML = `
+    <div class="section-inner">
+      <span class="eyebrow">Our Parish</span>
+      <div class="about-grid">
         <div class="about-text">
-          <h3>Our Story</h3>
-          <p>${description}</p>
-          <div class="about-boxes">
-            <div class="info-box">
-              <h4>Our Vision</h4>
-              <p>${vision}</p>
-            </div>
-            <div class="info-box">
-              <h4>Our Mission</h4>
-              <p>${mission}</p>
-            </div>
-          </div>
+          <h2 class="section-title">${esc(ab.title || 'About Our Church')}</h2>
+          <hr class="gold-bar">
+          <p>${esc(ab.description || '')}</p>
         </div>
-        <div class="about-text">
-          <h3>Welcome</h3>
-          <p>Whether you are a lifelong member or visiting for the first time, we welcome you with open hearts. Our church is a place of spiritual growth, fellowship, and service to God and our community.</p>
-          <div class="about-boxes">
-            <div class="info-box">
-              <h4>Worship With Us</h4>
-              <p>Join us for Sunday Divine Liturgy at 10:00 AM. All are welcome to participate in our sacred services.</p>
-            </div>
-            <div class="info-box">
-              <h4>Get Involved</h4>
-              <p>Discover ways to serve, grow spiritually, and build meaningful connections with our church community.</p>
-            </div>
+        <div class="about-panels">
+          <div class="about-panel">
+            <h4>Our Vision</h4>
+            <p>${esc(ab.vision || '')}</p>
+          </div>
+          <div class="about-panel">
+            <h4>Our Mission</h4>
+            <p>${esc(ab.mission || '')}</p>
           </div>
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-// Returns full URL or prefixes with ./images/ for local paths
-function imgSrc(path) {
-  if (!path) return '';
-  return (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('//'))
-    ? path : './images/' + path;
-}
-
-// Clergy Section
+// ── CLERGY ─────────────────────────────────────────────────────────
 function renderClergy() {
-  const section = document.querySelector('.clergy');
-  const clergyHTML = content.clergy.map(c => `
-    <div class="clergy-card">
-      <img src="${imgSrc(c.image)}" alt="${c.name}" onerror="this.style.background='linear-gradient(135deg, #05152d, #123b73)'; this.style.minHeight='220px';">
-      <div class="clergy-info">
-        <h3>${c.name}</h3>
-        <div class="clergy-title">${c.title}</div>
-        <p class="clergy-bio">${c.bio}</p>
-      </div>
-    </div>
-  `).join('');
+  const el = document.getElementById('clergy');
+  if (!el) return;
+  const clergy = content.clergy || [];
+  const cards = clergy.map(p => {
+    const photo = p.image
+      ? `<div class="clergy-photo-wrap"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'clergy-placeholder\\'>✝</div>'"></div>`
+      : `<div class="clergy-placeholder">✝</div>`;
+    return `
+      <div class="clergy-card">
+        ${photo}
+        <div class="clergy-info">
+          <div class="clergy-role">${esc(p.title || '')}</div>
+          <div class="clergy-name">${esc(p.name || '')}</div>
+          <p class="clergy-bio">${esc(p.bio || '')}</p>
+        </div>
+      </div>`;
+  }).join('');
 
-  section.innerHTML = `
-    <div class="container">
-      <h2 id="clergy">Our Clergy & Servants</h2>
-      <div class="clergy-grid">
-        ${clergyHTML}
-      </div>
-    </div>
-  `;
+  el.innerHTML = `
+    <div class="section-inner">
+      <span class="eyebrow">Leadership</span>
+      <h2 class="section-title">Clergy &amp; Staff</h2>
+      <hr class="gold-bar">
+      <div class="clergy-grid">${cards || '<p style="color:var(--text-muted)">Clergy information coming soon.</p>'}</div>
+    </div>`;
 }
 
-// Ministries Section
+// ── MINISTRIES ─────────────────────────────────────────────────────
 function renderMinistries() {
-  const section = document.querySelector('.ministries');
-  const ministriesHTML = content.ministries.map(m => `
-    <div class="ministry-card">
-      <div class="icon">${m.icon}</div>
-      <h3>${m.name}</h3>
-      <p>${m.description}</p>
-    </div>
-  `).join('');
+  const el = document.getElementById('ministries');
+  if (!el) return;
+  const mins = content.ministries || [];
+  const cards = mins.map(m => {
+    const img = m.image
+      ? `<div class="ministry-img-wrap"><img src="${esc(m.image)}" alt="${esc(m.name)}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`
+      : `<div class="ministry-img-placeholder">✝</div>`;
+    return `
+      <div class="ministry-card">
+        ${img}
+        <div class="ministry-body">
+          <div class="ministry-name">${esc(m.name || '')}</div>
+          <p class="ministry-desc">${esc(m.description || '')}</p>
+        </div>
+      </div>`;
+  }).join('');
 
-  section.innerHTML = `
-    <div class="container">
-      <h2 id="ministries">${content.ministries && content.ministries.length ? 'Our Ministries' : 'Ministries'}</h2>
-      <div class="ministries-grid">
-        ${ministriesHTML}
-      </div>
-    </div>
-  `;
+  el.innerHTML = `
+    <div class="section-inner">
+      <span class="eyebrow">Community</span>
+      <h2 class="section-title">Our Ministries</h2>
+      <hr class="gold-bar">
+      <div class="ministries-grid">${cards}</div>
+    </div>`;
 }
 
-// Schedule Section
+// ── SCHEDULE ───────────────────────────────────────────────────────
 function renderSchedule() {
-  const section = document.querySelector('.schedule');
-  const scheduleHTML = content.schedule.events.map(e => `
-    <div class="schedule-item">
-      <div class="schedule-day">${e.day}</div>
-      <div class="schedule-service">
-        <div class="schedule-service-name">${e.service}</div>
-        <div class="schedule-service-time">${e.time}</div>
-      </div>
-      <div class="schedule-duration">${e.duration}</div>
-    </div>
+  const el = document.getElementById('schedule');
+  if (!el) return;
+  const events = content.schedule?.events || [];
+  const dayOrder = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const byDay = {};
+  events.forEach(ev => { if (!byDay[ev.day]) byDay[ev.day] = []; byDay[ev.day].push(ev); });
+  const days = dayOrder.filter(d => byDay[d]);
+
+  const tabs = days.map((d, i) => `
+    <button class="sched-tab${i === 0 ? ' active' : ''}" onclick="switchSchedTab('${d}', this)">${d}</button>
   `).join('');
 
-  section.innerHTML = `
-    <div class="container">
-      <h2 id="schedule">${content.schedule.title}</h2>
-      <div class="schedule-list">
-        ${scheduleHTML}
-      </div>
-    </div>
-  `;
+  const panels = days.map((d, i) => {
+    const rows = byDay[d].map(ev => `
+      <div class="sched-row">
+        <div class="sched-time">${esc(ev.time)}</div>
+        <div class="sched-service">${esc(ev.service)}</div>
+        ${ev.duration ? `<div class="sched-dur">${esc(ev.duration)}</div>` : ''}
+      </div>`).join('');
+    return `<div class="sched-panel${i === 0 ? ' active' : ''}" id="sched-${d}">${rows}</div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="section-inner">
+      <span class="eyebrow">Worship</span>
+      <h2 class="section-title" style="color:var(--white)">Weekly Services</h2>
+      <hr class="gold-bar">
+      <div class="sched-tabs">${tabs}</div>
+      <div class="sched-panels">${panels}</div>
+    </div>`;
 }
 
-// Sermons Section
+function switchSchedTab(day, btn) {
+  document.querySelectorAll('.sched-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.sched-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const panel = document.getElementById('sched-' + day);
+  if (panel) panel.classList.add('active');
+}
+
+// ── SERMONS ────────────────────────────────────────────────────────
 function renderSermons() {
-  const section = document.querySelector('.sermons');
-  const sermonsHTML = content.sermons.map(s => `
-    <div class="sermon-card">
-      <div class="sermon-thumbnail">
-        <span style="font-size: 3rem;">🎬</span>
-      </div>
-      <div class="sermon-info">
-        <div class="sermon-date">${formatDate(s.date)}</div>
-        <h3>${s.title}</h3>
-        <div class="sermon-speaker">By ${s.speaker}</div>
-        <p class="sermon-desc">${s.description}</p>
-        <a href="https://youtube.com/watch?v=${s.youtubeId}" target="_blank" class="watch-btn">Watch Now</a>
-      </div>
-    </div>
-  `).join('');
+  const el = document.getElementById('sermons');
+  if (!el) return;
+  const sermons = content.sermons || [];
+  const rows = sermons.map(s => {
+    const d = s.date ? new Date(s.date + 'T00:00:00') : null;
+    const month = d ? d.toLocaleDateString('en-US',{month:'short'}).toUpperCase() : '';
+    const day   = d ? d.getDate() : '';
+    const year  = d ? d.getFullYear() : '';
+    const btn = s.youtubeId
+      ? `<a class="btn-watch" href="https://www.youtube.com/watch?v=${esc(s.youtubeId)}" target="_blank" rel="noopener">▶ Watch</a>`
+      : '';
+    return `
+      <div class="sermon-row">
+        <div class="sermon-date-col">
+          <div class="sermon-month">${month}</div>
+          <div class="sermon-day-num">${day}</div>
+          <div class="sermon-year">${year}</div>
+        </div>
+        <div>
+          <div class="sermon-title">${esc(s.title || '')}</div>
+          <div class="sermon-speaker">${esc(s.speaker || '')}</div>
+          ${s.description ? `<div class="sermon-desc">${esc(s.description)}</div>` : ''}
+        </div>
+        <div>${btn}</div>
+      </div>`;
+  }).join('');
 
-  section.innerHTML = `
-    <div class="container">
-      <h2 id="sermons">Recent Sermons</h2>
-      <div class="sermons-grid">
-        ${sermonsHTML}
-      </div>
-    </div>
-  `;
+  el.innerHTML = `
+    <div class="section-inner">
+      <span class="eyebrow">Teaching</span>
+      <h2 class="section-title">Sermon Archive</h2>
+      <hr class="gold-bar">
+      <div class="sermons-list">${rows || '<p style="color:var(--text-muted)">Sermons coming soon.</p>'}</div>
+    </div>`;
 }
 
-// Events Section
+// ── EVENTS ─────────────────────────────────────────────────────────
 function renderEvents() {
-  const section = document.querySelector('.events');
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const el = document.getElementById('events');
+  if (!el) return;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const events = (content.events || []).filter(ev => !ev.date || new Date(ev.date + 'T00:00:00') >= today);
 
-  const upcomingEvents = content.events.filter(e => {
-    const eventDate = new Date(e.date);
-    eventDate.setHours(0, 0, 0, 0);
-    return eventDate >= today;
-  }).sort((a, b) => new Date(a.date) - new Date(b.date));
-
-  let eventsHTML = '';
-  if (upcomingEvents.length > 0) {
-    eventsHTML = upcomingEvents.map(e => `
+  const cards = events.map(ev => {
+    const dateStr = ev.date ? new Date(ev.date + 'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'}) : '';
+    const img = ev.image
+      ? `<div class="event-img-wrap"><img src="${esc(ev.image)}" alt="${esc(ev.title)}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`
+      : '';
+    return `
       <div class="event-card">
-        <div class="event-image">
-          ${e.image ? `<img src="${imgSrc(e.image)}" alt="${e.title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span>🎊</span>'">` : '<span>🎊</span>'}
+        ${img}
+        <div class="event-body">
+          <span class="event-date-badge">${esc(dateStr)}</span>
+          <div class="event-title">${esc(ev.title || '')}</div>
+          <div class="event-meta">${ev.time ? esc(ev.time) + ' ' : ''}${ev.location ? '· ' + esc(ev.location) : ''}</div>
+          ${ev.description ? `<p class="event-desc">${esc(ev.description)}</p>` : ''}
         </div>
-        <div class="event-details">
-          <div class="event-date">📅 ${formatDate(e.date)}</div>
-          <h3>${e.title}</h3>
-          <div class="event-time">⏰ ${e.time}</div>
-          <div class="event-location">📍 ${e.location}</div>
-          <p class="event-desc">${e.description}</p>
-        </div>
-      </div>
-    `).join('');
-  } else {
-    eventsHTML = '<div class="no-events"><p>No upcoming events at this time. Check back soon!</p></div>';
-  }
+      </div>`;
+  }).join('');
 
-  section.innerHTML = `
-    <div class="container">
-      <h2 id="events">Upcoming Events</h2>
-      <div class="events-grid">
-        ${eventsHTML}
-      </div>
-    </div>
-  `;
+  el.innerHTML = `
+    <div class="section-inner">
+      <span class="eyebrow">Calendar</span>
+      <h2 class="section-title">Upcoming Events</h2>
+      <hr class="gold-bar">
+      ${events.length ? `<div class="events-grid">${cards}</div>` : '<p style="color:var(--text-muted)">No upcoming events at this time.</p>'}
+    </div>`;
 }
 
-// Gallery Section
+// ── GALLERY ────────────────────────────────────────────────────────
 function renderGallery() {
-  const section = document.querySelector('.gallery');
-  const galleryHTML = content.gallery.map(g => `
-    <div class="gallery-item">
-      <img src="${imgSrc(g.image)}" alt="${g.title}" onerror="this.parentElement.innerHTML='<div class=\'gallery-placeholder\'>📷</div>'"  loading="lazy">
-    </div>
-  `).join('');
-
-  section.innerHTML = `
-    <div class="container">
-      <h2 id="gallery">Photo Gallery</h2>
-      <div class="gallery-grid">
-        ${galleryHTML}
+  const el = document.getElementById('gallery');
+  if (!el) return;
+  const photos = content.gallery || [];
+  const items = photos.map(p => `
+    <div class="g-item">
+      <img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy" onerror="this.parentElement.style.display='none'">
+      <div class="g-caption">
+        <div class="g-caption-title">${esc(p.title || '')}</div>
+        ${p.category ? `<div class="g-caption-cat">${esc(p.category)}</div>` : ''}
       </div>
+    </div>`).join('');
+
+  el.innerHTML = `
+    <div class="gallery-header">
+      <span class="eyebrow" style="text-align:center;display:block">Life of the Parish</span>
+      <h2 class="section-title" style="text-align:center">Photo Gallery</h2>
     </div>
-  `;
+    <div class="gallery-cols">${items}</div>`;
 }
 
-// Footer
+// ── FOOTER ─────────────────────────────────────────────────────────
 function renderFooter() {
-  const footer = document.querySelector('footer');
-  footer.innerHTML = `
-    <div class="footer-container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>${content.church.name}</h3>
-          <p>${content.church.tagline}</p>
+  const el = document.getElementById('siteFooter');
+  if (!el) return;
+  const ch = content.church || {};
+  el.innerHTML = `
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">${esc(ch.name || 'Saint Mary Coptic Orthodox Church')}</div>
+          <div class="footer-sub">Coptic Orthodox Diocese</div>
+          <p class="footer-desc">A vibrant community of faith rooted in the ancient traditions of the Coptic Orthodox Church.</p>
+          <div style="margin-top:1.5rem">
+            <a href="login.html" style="color:var(--gold);font-size:0.78rem;letter-spacing:1px;text-transform:uppercase">Member Portal →</a>
+          </div>
         </div>
-        <div class="footer-section">
-          <h3>Quick Links</h3>
-          <a href="#about">About</a>
-          <a href="#clergy">Clergy</a>
-          <a href="#ministries">Ministries</a>
-          <a href="#schedule">Schedule</a>
+        <div>
+          <div class="footer-col-title">Navigate</div>
+          <ul class="footer-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#clergy">Clergy</a></li>
+            <li><a href="#ministries">Ministries</a></li>
+            <li><a href="#schedule">Schedule</a></li>
+            <li><a href="#sermons">Sermons</a></li>
+            <li><a href="#events">Events</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+          </ul>
         </div>
-        <div class="footer-section">
-          <h3>Contact Us</h3>
-          <p>📧 Email: info@church.org</p>
-          <p>📱 Phone: (555) 123-4567</p>
-          <p>📍 Address: 123 Church Street</p>
+        <div>
+          <div class="footer-col-title">Contact</div>
+          <div class="footer-contact">
+            <div class="footer-contact-row">
+              <span class="footer-contact-icon">✉</span>
+              <span class="footer-contact-text">info@saintmarychurch.org</span>
+            </div>
+            <div class="footer-contact-row">
+              <span class="footer-contact-icon">☎</span>
+              <span class="footer-contact-text">(555) 123-4567</span>
+            </div>
+            <div class="footer-contact-row">
+              <span class="footer-contact-icon">⛪</span>
+              <span class="footer-contact-text">123 Church Street<br>Your City, State 00000</span>
+            </div>
+          </div>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2024 ${content.church.name}. All rights reserved.</p>
+        <span class="footer-copy">© ${new Date().getFullYear()} ${esc(ch.name || 'Saint Mary Coptic Orthodox Church')}. All rights reserved.</span>
+        <span class="footer-copy">Coptic Orthodox Church</span>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-// Utility Functions
-function formatDate(dateString) {
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString('en-US', options);
+// ── UTIL ───────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function setupMenuToggle() {
-  const toggle = document.getElementById('menuToggle');
-  const nav = document.getElementById('nav');
-
-  if (toggle) {
-    toggle.addEventListener('click', () => {
-      nav.classList.toggle('active');
-    });
-  }
-
-  const navLinks = document.querySelectorAll('nav a');
-  navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      nav.classList.remove('active');
-    });
-  });
-}
-
-function setupSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
-      }
-    });
-  });
+function getCurrentUser() {
+  try { return JSON.parse(sessionStorage.getItem('sm_user') || 'null'); } catch { return null; }
 }
