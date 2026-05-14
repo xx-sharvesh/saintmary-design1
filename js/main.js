@@ -77,25 +77,27 @@ function renderHero() {
 // Live Stream Section
 function renderLiveStream() {
   const section = document.querySelector('.live-stream');
-  const { title, youtubeId, isLive, nextStream } = content.live;
+  const { title, youtubeId, nextStream } = content.live;
 
+  // Always embed when a YouTube ID is set — YouTube shows LIVE automatically
   let streamHTML = '';
-  if (isLive && youtubeId) {
+  if (youtubeId) {
     streamHTML = `
       <div class="stream-box stream-active">
         <iframe
-          src="https://www.youtube.com/embed/${youtubeId}?autoplay=0"
+          src="https://www.youtube.com/embed/${youtubeId}?rel=0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen>
         </iframe>
       </div>
+      <div class="stream-next-time">Regular stream: ${nextStream}</div>
     `;
   } else {
     streamHTML = `
       <div class="stream-box stream-inactive">
         <div class="icon">📺</div>
         <h3>Live Stream Coming Soon</h3>
-        <p>${content.live.description}</p>
+        <p>${content.live.description || ''}</p>
         <div class="stream-next-time">${nextStream}</div>
       </div>
     `;
