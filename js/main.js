@@ -326,6 +326,7 @@ function renderFooter() {
     <div class="footer-inner">
       <div class="footer-grid">
         <div>
+          <img src="images/logo.jpeg" alt="Saint Mary" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid rgba(215,178,74,0.4);margin-bottom:1rem;">
           <div class="footer-brand">${esc(ch.name || 'Saint Mary Coptic Orthodox Church')}</div>
           <div class="footer-sub">Coptic Orthodox Diocese</div>
           <p class="footer-desc">A vibrant community of faith rooted in the ancient traditions of the Coptic Orthodox Church.</p>

@@ -82,10 +82,12 @@ h2.section-title {
   display:flex; align-items:center; gap:0.6rem;
   font-family:'Playfair Display',Georgia,serif;
 }
-.nav-cross {
-  color:var(--gold); font-size:1.3rem;
-  transition:color 0.3s;
+.nav-logo-img {
+  width:42px; height:42px; border-radius:50%;
+  object-fit:cover; border:2px solid rgba(215,178,74,0.5);
+  transition:border-color 0.3s;
 }
+.site-nav.scrolled .nav-logo-img { border-color:var(--gold); }
 .nav-title {
   font-size:1.05rem; color:var(--white); font-weight:400;
   transition:color 0.3s; letter-spacing:0.5px;
